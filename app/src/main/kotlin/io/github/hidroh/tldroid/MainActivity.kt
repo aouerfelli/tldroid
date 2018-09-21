@@ -34,7 +34,7 @@ class MainActivity : ThemedActivity() {
     findViewById<ImageButton>(R.id.info_button)!!.setOnClickListener { showInfo() }
     findViewById<ImageButton>(R.id.list_button)!!.setOnClickListener { showList() }
     findViewById<ImageButton>(R.id.settings_button)!!.setOnClickListener { showThemeOptions() }
-    mEditText = findViewById(R.id.edit_text) as AutoCompleteTextView?
+    mEditText = findViewById(R.id.edit_text)
     mEditText!!.setOnEditorActionListener { v, actionId, _ ->
       actionId == EditorInfo.IME_ACTION_SEARCH && search(v.text.toString(), null)
     }
@@ -120,7 +120,7 @@ class MainActivity : ThemedActivity() {
   }
 
   private class CursorAdapter(context: Context) :
-      ResourceCursorAdapter(context, R.layout.dropdown_item, null, false) {
+      ResourceCursorAdapter(context, R.layout.dropdown_item, null, ResourceCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) {
 
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
     private var mQueryString: String? = null

@@ -7,9 +7,9 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.text.TextUtils
-import junit.framework.Assert.assertNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

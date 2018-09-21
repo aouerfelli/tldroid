@@ -8,10 +8,10 @@ import java.io.IOException
 import java.io.InputStream
 
 internal object Utils {
-  private val KEY_THEME: String = "pref:theme"
-  private val VAL_THEME_SOLARIZED: String = "theme:solarized"
-  private val VAL_THEME_AFTERGLOW: String = "theme:afterglow"
-  private val VAL_THEME_TOMORROW: String = "theme:tomorrow"
+  private const val KEY_THEME = "pref:theme"
+  private const val VAL_THEME_SOLARIZED = "theme:solarized"
+  private const val VAL_THEME_AFTERGLOW = "theme:afterglow"
+  private const val VAL_THEME_TOMORROW = "theme:tomorrow"
 
   @Throws(IOException::class)
   fun readUtf8(inputStream: InputStream): String {
@@ -33,10 +33,10 @@ internal object Utils {
   fun loadTheme(context: Context): Int {
     val theme = PreferenceManager.getDefaultSharedPreferences(context)
         .getString(KEY_THEME, VAL_THEME_SOLARIZED)
-    when (theme) {
-      VAL_THEME_AFTERGLOW -> return R.style.AppTheme_Afterglow
-      VAL_THEME_TOMORROW -> return R.style.AppTheme_Tomorrow
-      else -> return R.style.AppTheme
+    return when (theme) {
+      VAL_THEME_AFTERGLOW -> R.style.AppTheme_Afterglow
+      VAL_THEME_TOMORROW -> R.style.AppTheme_Tomorrow
+      else -> R.style.AppTheme
     }
   }
 }

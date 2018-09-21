@@ -6,6 +6,7 @@ import android.graphics.Typeface
 class Application : android.app.Application() {
   companion object {
     var MONOSPACE_TYPEFACE: Typeface? = null
+      private set
   }
 
   override fun onCreate() {

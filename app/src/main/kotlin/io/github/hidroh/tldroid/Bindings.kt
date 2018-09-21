@@ -5,7 +5,7 @@ import android.database.Cursor
 import android.databinding.BaseObservable
 import android.databinding.BindingAdapter
 import android.support.annotation.AttrRes
-import android.support.annotation.IdRes
+import android.support.annotation.ColorInt
 import android.support.v4.content.ContextCompat
 import android.text.SpannableString
 import android.text.Spanned
@@ -15,7 +15,7 @@ import android.webkit.WebView
 import android.widget.TextView
 
 object Bindings {
-  private val FORMAT_HTML_COLOR = "%06X"
+  private const val FORMAT_HTML_COLOR = "%06X"
 
   @JvmStatic
   @BindingAdapter("bind:monospace")
@@ -35,8 +35,8 @@ object Bindings {
     val spannable = SpannableString(textView.text)
     val start = TextUtils.indexOf(spannable, highlightText)
     if (start >= 0) {
-      spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(
-          textView.context, getIdRes(textView.context, highlightColor))),
+      spannable.setSpan(ForegroundColorSpan(getColorFromAttr(
+          textView.context, highlightColor)),
           start, start + highlightText.length,
           Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
     }
@@ -60,8 +60,7 @@ object Bindings {
     if (TextUtils.isEmpty(html)) {
       return
     }
-    webView.setBackgroundColor(ContextCompat.getColor(webView.context,
-        getIdRes(webView.context, backgroundColor)))
+    webView.setBackgroundColor(getColorFromAttr(webView.context, backgroundColor))
     webView.loadDataWithBaseURL(null,
         wrapHtml(webView.context, html, textColor, linkColor, textSize, margin),
         "text/html", "UTF-8", null)
@@ -83,20 +82,19 @@ object Bindings {
   }
 
   private fun toHtmlColor(context: Context, @AttrRes colorAttr: Int): String {
-    return String.format(FORMAT_HTML_COLOR, 0xFFFFFF and ContextCompat.getColor(context,
-        getIdRes(context, colorAttr)))
+    return String.format(FORMAT_HTML_COLOR, 0xFFFFFF and getColorFromAttr(context, colorAttr))
   }
 
   private fun toHtmlPx(context: Context, dimen: Float): Float {
     return dimen / context.resources.displayMetrics.density
   }
 
-  @IdRes
-  private fun getIdRes(context: Context, @AttrRes attrRes: Int): Int {
+  @ColorInt
+  private fun getColorFromAttr(context: Context, @AttrRes attrRes: Int): Int {
     val ta = context.theme.obtainStyledAttributes(intArrayOf(attrRes))
     val resId = ta.getResourceId(0, 0)
     ta.recycle()
-    return resId
+    return ContextCompat.getColor(context, resId)
   }
 
   class Command : BaseObservable() {

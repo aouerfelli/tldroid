@@ -85,7 +85,7 @@ class SyncService : IntentService(SyncService.TAG) {
     }
 
     private fun persist(commands: Commands?) {
-      if (commands == null || commands.commands == null || commands.commands!!.size == 0) {
+      if (commands?.commands == null || commands.commands!!.isEmpty()) {
         return
       }
       PreferenceManager.getDefaultSharedPreferences(context)

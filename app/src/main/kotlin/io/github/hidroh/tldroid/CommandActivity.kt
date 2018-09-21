@@ -5,19 +5,21 @@ import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
 import android.net.Uri
 import android.os.AsyncTask
+import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.support.annotation.RequiresApi
 import android.support.design.widget.CollapsingToolbarLayout
+import android.support.v4.text.HtmlCompat
 import android.support.v4.view.MenuItemCompat
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.ShareActionProvider
-import android.support.v7.widget.Toolbar
-import android.text.Html
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import java.lang.ref.WeakReference
@@ -26,8 +28,8 @@ class CommandActivity : ThemedActivity() {
   companion object {
     val EXTRA_QUERY = CommandActivity::class.java.name + ".EXTRA_QUERY"
     val EXTRA_PLATFORM = CommandActivity::class.java.name + ".EXTRA_PLATFORM"
-    private val STATE_CONTENT = "state:content"
-    private val PLATFORM_OSX = "osx"
+    private const val STATE_CONTENT = "state:content"
+    private const val PLATFORM_OSX = "osx"
   }
 
   private var mContent: String? = null
@@ -40,21 +42,27 @@ class CommandActivity : ThemedActivity() {
     mQuery = intent.getStringExtra(EXTRA_QUERY)
     mPlatform = intent.getStringExtra(EXTRA_PLATFORM)
     title = mQuery
-    mBinding = DataBindingUtil.setContentView<ViewDataBinding>(this, R.layout.activity_command)
-    setSupportActionBar(findViewById(R.id.toolbar) as Toolbar?)
+    mBinding = DataBindingUtil.setContentView(this, R.layout.activity_command)
+    setSupportActionBar(findViewById(R.id.toolbar))
     supportActionBar!!.displayOptions = ActionBar.DISPLAY_SHOW_HOME or
         ActionBar.DISPLAY_HOME_AS_UP or ActionBar.DISPLAY_SHOW_TITLE
-    val collapsingToolbar = findViewById(R.id.collapsing_toolbar_layout) as CollapsingToolbarLayout?
+    val collapsingToolbar = findViewById<CollapsingToolbarLayout>(R.id.collapsing_toolbar_layout)
     collapsingToolbar!!.setExpandedTitleTypeface(Application.MONOSPACE_TYPEFACE)
     collapsingToolbar.setCollapsedTitleTypeface(Application.MONOSPACE_TYPEFACE)
-    val webView = findViewById(R.id.web_view) as WebView?
-    webView!!.setWebChromeClient(WebChromeClient())
-    webView.setWebViewClient(object : WebViewClient() {
+    val webView = findViewById<WebView>(R.id.web_view)
+    webView!!.webChromeClient = WebChromeClient()
+    webView.webViewClient = object : WebViewClient() {
+      @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+      override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+        startActivity(Intent(Intent.ACTION_VIEW, request.url))
+        return true
+      }
+
       override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
         return true
       }
-    })
+    }
     if (savedInstanceState != null) {
       mContent = savedInstanceState.getString(STATE_CONTENT)
     }
@@ -87,7 +95,7 @@ class CommandActivity : ThemedActivity() {
           .setShareIntent(Intent(Intent.ACTION_SEND)
               .setType("text/plain")
               .putExtra(Intent.EXTRA_SUBJECT, mQuery)
-              .putExtra(Intent.EXTRA_TEXT, Html.fromHtml(mContent).toString()))
+              .putExtra(Intent.EXTRA_TEXT, HtmlCompat.fromHtml(mContent!!, HtmlCompat.FROM_HTML_MODE_LEGACY).toString()))
     }
     menu.findItem(R.id.menu_run).isVisible = visible && !TextUtils.equals(PLATFORM_OSX, mPlatform)
     return super.onPrepareOptionsMenu(menu)
@@ -113,7 +121,7 @@ class CommandActivity : ThemedActivity() {
 
   internal fun render(html: String?) {
     mContent = html ?: ""
-    supportInvalidateOptionsMenu()
+    invalidateOptionsMenu()
     // just display a generic message if empty for now
     mBinding!!.setVariable(io.github.hidroh.tldroid.BR.content,
         if (TextUtils.isEmpty(mContent)) getString(R.string.empty_html) else html)

@@ -16,8 +16,8 @@ import java.lang.ref.WeakReference
 class RunActivity : ThemedActivity() {
   companion object {
     val EXTRA_COMMAND = RunActivity::class.java.name + ".EXTRA_COMMAND"
-    private val STATE_ERROR = "state:error"
-    private val STATE_OUTPUT = "state:output"
+    private const val STATE_ERROR = "state:error"
+    private const val STATE_OUTPUT = "state:output"
   }
 
   private var mOutput: TextView? = null
@@ -29,11 +29,11 @@ class RunActivity : ThemedActivity() {
     val snackbar = Snackbar.make(findViewById(android.R.id.content),
         R.string.run_warning, Snackbar.LENGTH_INDEFINITE)
     snackbar.setAction(android.R.string.ok, { snackbar.dismiss() }).show()
-    mOutput = findViewById(R.id.output) as TextView?
-    mError = findViewById(R.id.error) as TextView?
+    mOutput = findViewById(R.id.output)
+    mError = findViewById(R.id.error)
     val command = intent.getStringExtra(EXTRA_COMMAND)
-    (findViewById(R.id.prompt) as TextView).append(command)
-    (findViewById(R.id.edit_text) as EditText).setOnEditorActionListener { v, _, _ ->
+    (findViewById<TextView>(R.id.prompt)).append(command)
+    (findViewById<EditText>(R.id.edit_text)).setOnEditorActionListener { v, _, _ ->
       execute(command, v.text.toString().trim())
       true
     }
@@ -71,21 +71,17 @@ class RunActivity : ThemedActivity() {
 
   internal class RunTask(runActivity: RunActivity) :
       AsyncTask<String, Void, Pair<String, String>>() {
-    private val mRunActivity: WeakReference<RunActivity>
-
-    init {
-      mRunActivity = WeakReference(runActivity)
-    }
+    private val mRunActivity = WeakReference(runActivity)
 
     override fun doInBackground(vararg params: String): Pair<String, String> {
-      try {
-        val process = Runtime.getRuntime().exec(params)
-        val stderr = Utils.readUtf8(process.errorStream)
-        val stdout = Utils.readUtf8(process.inputStream)
-        process.destroy()
-        return Pair.create(stdout, stderr)
+      return try {
+          val process = Runtime.getRuntime().exec(params)
+          val stderr = Utils.readUtf8(process.errorStream)
+          val stdout = Utils.readUtf8(process.inputStream)
+          process.destroy()
+        Pair.create(stdout, stderr)
       } catch (e: IOException) {
-        return Pair.create<String, String>(null, e.message)
+        Pair.create<String, String>(null, e.message)
       }
 
     }

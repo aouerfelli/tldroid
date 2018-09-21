@@ -14,8 +14,8 @@ class TldrProvider : ContentProvider() {
 
   companion object {
     const val AUTHORITY = "io.github.hidroh.tldroid.provider"
-    val URI_COMMAND = Uri
-        .parse("content://" + AUTHORITY)
+    val URI_COMMAND: Uri = Uri
+        .parse("content://$AUTHORITY")
         .buildUpon()
         .appendPath(CommandEntry.TABLE_NAME)
         .build()
@@ -35,7 +35,7 @@ class TldrProvider : ContentProvider() {
   private var mDbHelper: DbHelper? = null
 
   override fun onCreate(): Boolean {
-    mDbHelper = DbHelper(context)
+    mDbHelper = DbHelper(context!!)
     return true
   }
 
@@ -72,7 +72,10 @@ class TldrProvider : ContentProvider() {
         values, selection, selectionArgs) else 0
   }
 
-  class DbHelper : SQLiteOpenHelper {
+  class DbHelper(context: Context) : SQLiteOpenHelper(
+      context, TldrProvider.DbHelper.DB_NAME,
+      null, TldrProvider.DbHelper.DB_VERSION
+  ) {
     companion object {
       private const val DB_NAME = "tldr.db"
       private const val DB_VERSION = 2
@@ -86,10 +89,7 @@ class TldrProvider : ContentProvider() {
       private const val SQL_DROP_COMMAND_TABLE = "DROP TABLE IF EXISTS ${CommandEntry.TABLE_NAME}"
     }
 
-    constructor(context: Context) : super(context, TldrProvider.DbHelper.DB_NAME,
-        null, TldrProvider.DbHelper.DB_VERSION)
-
-    override fun onCreate(db: SQLiteDatabase) {
+      override fun onCreate(db: SQLiteDatabase) {
       db.execSQL(SQL_CREATE_COMMAND_TABLE)
     }
 
