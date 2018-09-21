@@ -31,9 +31,9 @@ class MainActivity : ThemedActivity() {
 
   private fun setContentView() {
     DataBindingUtil.setContentView<ViewDataBinding>(this, R.layout.activity_main)
-    findViewById(R.id.info_button)!!.setOnClickListener { showInfo() }
-    findViewById(R.id.list_button)!!.setOnClickListener { showList() }
-    findViewById(R.id.settings_button)!!.setOnClickListener { showThemeOptions() }
+    findViewById<ImageButton>(R.id.info_button)!!.setOnClickListener { showInfo() }
+    findViewById<ImageButton>(R.id.list_button)!!.setOnClickListener { showList() }
+    findViewById<ImageButton>(R.id.settings_button)!!.setOnClickListener { showThemeOptions() }
     mEditText = findViewById(R.id.edit_text) as AutoCompleteTextView?
     mEditText!!.setOnEditorActionListener { v, actionId, _ ->
       actionId == EditorInfo.IME_ACTION_SEARCH && search(v.text.toString(), null)

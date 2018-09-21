@@ -4,13 +4,13 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'jacoco'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.2"
 
     defaultConfig {
         applicationId "io.github.hidroh.tldroid"
-        minSdkVersion 9
-        targetSdkVersion 25
+        minSdkVersion 14
+        targetSdkVersion 28
         versionCode 10
         versionName "1.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -76,7 +76,6 @@ dependencies {
             'com.squareup.moshi:moshi:1.2.0',
             'com.squareup.okio:okio:1.8.0',
             "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    kapt "com.android.databinding:compiler:2.3.2"
     testImplementation 'junit:junit:4.12',
             'org.mockito:mockito-core:1.10.19',
             'org.powermock:powermock-module-junit4:1.6.2',
