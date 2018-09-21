@@ -18,8 +18,9 @@ import java.util.*
 class SyncService : IntentService(SyncService.TAG) {
   companion object {
     private const val TAG = "SyncService"
-    private const val INDEX_URL = "http://tldr-pages.github.io/assets/index.json"
-    private const val ZIP_URL = "http://tldr-pages.github.io/assets/tldr.zip"
+    private const val BASE_URL = "https://tldr.sh/assets"
+    private const val INDEX_URL = "$BASE_URL/index.json"
+    private const val ZIP_URL = "$BASE_URL/tldr.zip"
     const val EXTRA_ASSET_TYPE = "$TAG.EXTRA_ASSET_TYPE"
     const val PREF_LAST_REFRESHED = INDEX_URL
     const val PREF_LAST_ZIPPED = ZIP_URL
